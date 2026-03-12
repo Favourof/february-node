@@ -1,11 +1,15 @@
 const Product = require("../model/product");
+const User = require("../model/user");
 
 const addProduct = async (req, res) => {
   const { title, price, description, image } = req.body;
+  // console.log(req.user, "form the middle ware");
+
   try {
     if (!title || !price || !description || !image) {
       return res.status(401).json({ message: "all fieald are required" });
     }
+
     const product = await Product.create(req.body);
 
     if (product) {

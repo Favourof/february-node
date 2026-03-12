@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+
+app.use(cors({ origin: "http://localhost:5173" }));
 
 const productRoute = require("./routes/product.js");
 const conectDB = require("./config/db.js");
