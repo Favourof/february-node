@@ -25,6 +25,7 @@ const register = async (req, res) => {
       password: hasdedPassword,
     };
     await User.create(user);
+    console.log(bagde);
 
     return res.status(201).json({ message: "account creates Successfully" });
   } catch (error) {
@@ -57,9 +58,18 @@ const login = async (req, res) => {
       jwt_secrect,
       { expiresIn: expire_in },
     );
+
     console.log(user, "userdeatils");
 
-    return res.status(200).json({ message: "Login Successfully", token });
+    const users = {
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
+
+    return res
+      .status(200)
+      .json({ message: "Login Successfully", token, users });
   } catch (error) {
     console.log(error.message);
     res.json({ message: error.message });

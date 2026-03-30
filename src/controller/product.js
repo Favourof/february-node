@@ -1,22 +1,44 @@
+const { cloudinary } = require("../config/cloudinary");
 const Product = require("../model/product");
 const User = require("../model/user");
 
 const addProduct = async (req, res) => {
-  const { title, price, description, image } = req.body;
+  console.log(req.body);
+
+  console.log(req.file, "jdsfjbkdjfbijwekfw djf ewfwe");
+
+  const { title, price, description } = req.body;
   // console.log(req.user, "form the middle ware");
 
   try {
-    if (!title || !price || !description || !image) {
+    if (!title || !price || !description || !req.file) {
       return res.status(401).json({ message: "all fieald are required" });
     }
 
-    const product = await Product.create(req.body);
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "february Products" },
+      async (error, result) => {
+        if (error) {
+          return res.status(500).json({ message: "Cloudinary upload failed" });
+        }
+        console.log(result, "from cludinary");
 
-    if (product) {
-      return res
-        .status(201)
-        .json({ message: "product created Succefully", product });
-    }
+        const product = {
+          ...req.body,
+          image: result.secure_url,
+          imageId: result.public_id,
+        };
+
+        await Product.create(product);
+
+        if (product) {
+          return res
+            .status(201)
+            .json({ message: "product created Succefully", product });
+        }
+      },
+    );
+    stream.end(req.file.buffer);
   } catch (error) {
     res.status(500).json({ message: error.message });
     console.log(error, error.message);

@@ -7,10 +7,11 @@ const {
 } = require("../controller/product");
 const authenticate = require("../middleware/token");
 const { checkRole } = require("../middleware/adminRole");
+const { upload } = require("../middleware/multer");
 
 const route = express.Router();
 
-route.post("/", authenticate, checkRole, addProduct);
+route.post("/", authenticate, checkRole, upload.single("image"), addProduct);
 route.get("/", getProduct);
 route.put("/:id", authenticate, checkRole, updateProduct);
 route.delete("/:id", authenticate, checkRole, deleteProduct);

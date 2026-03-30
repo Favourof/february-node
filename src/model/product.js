@@ -24,6 +24,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  imageId: {
+    type: String,
+    required: true,
+  },
 });
 
 //  product model
