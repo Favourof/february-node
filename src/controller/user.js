@@ -3,8 +3,23 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { jwt_secrect, expire_in } = require("../config/env");
 const saltRound = 10;
+const { validationResult } = require("express-validator");
+
+const errorValidator = (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      errors: errors.array()?.[0].msg,
+    });
+  }
+  return null;
+};
 
 const register = async (req, res) => {
+  const errorRes = errorValidator(req, res);
+  if (errorRes) return errorRes;
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
@@ -35,6 +50,8 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
+  const errorRes = errorValidator(req, res);
+  if (errorRes) return errorRes;
   const { email, password } = req.body;
   try {
     if (!email || !password) {
